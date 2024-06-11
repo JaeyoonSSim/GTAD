@@ -7,6 +7,7 @@ import pandas as pd
 import pdb
 import time
 import math
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
 from utils.utility import *
 from utils.metric import *
@@ -855,7 +856,6 @@ class LSAP_Trainer:
 
         return np.mean(tl), np.mean(ta), np.mean(tac), np.mean(tpr), np.mean(tsp), np.mean(tse), np.mean(f1s), np.array(ts)
 
-from torch.optim.lr_scheduler import CosineAnnealingLR
 
 ### Trainer for 'Ours'
 class OURS_Trainer:

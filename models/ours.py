@@ -1,4 +1,5 @@
 import math
+import copy
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -104,7 +105,6 @@ class OURS(nn.Module):
         
         self.classifier = Classifier(adj_dim, in_dim, hid_dim, out_dim, dropout)
 
-        import copy
         c = copy.deepcopy
         attn = MultiHeadedAttention(in_dim, in_dim * hid_dim)
         fd_fwd = FeedForward(adj_dim, in_dim, hid_dim, hid_dim, dropout)
@@ -174,6 +174,7 @@ class OURS(nn.Module):
         out = self.classifier(out)
         
         return out
+    
 class LayerNorm(nn.Module):
     def __init__(self, features, eps=1e-6):
         super(LayerNorm, self).__init__()
