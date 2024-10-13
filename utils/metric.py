@@ -8,7 +8,6 @@ def compute_accuracy(output, labels):
 
     return correct / len(labels)
 
-
 def confusion(output, labels, ovo=0):
     predict = output.max(1)[1].type_as(labels)
     n_label = output.shape[1]
