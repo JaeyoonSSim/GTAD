@@ -36,9 +36,6 @@ class GTAD_Trainer:
         return alpha * t_loss_final
     
     def train(self, i):
-        lt = [] # List of train loss
-        at = [] # List of train accuracy
-        
         pbar = tqdm(range(1, self.args.epoch + 1))
         pbar.set_description(f'FOLD-{i}')
         for epoch in pbar:
