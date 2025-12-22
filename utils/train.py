@@ -39,8 +39,6 @@ class GTAD_Trainer:
         lt = [] # List of train loss
         at = [] # List of train accuracy
         
-        acc_best = 0.0
-        
         pbar = tqdm(range(1, self.args.epoch + 1))
         pbar.set_description(f'FOLD-{i}')
         for epoch in pbar:
@@ -48,11 +46,8 @@ class GTAD_Trainer:
             
             for _, X, Y, _, EIGVAL, EIGVEC in self.train_loader:
                 self.optimizer.zero_grad() # Sets the gradients of all optimized tensors to zero
-                
                 Y_hat_train = self.network(X, EIGVAL, EIGVEC) # Shape: (sample, label)
-                
                 loss_train = F.nll_loss(Y_hat_train, Y) + self.t_loss()
-
                 acc_train = compute_accuracy(Y_hat_train, Y)
                 loss_train.backward()
 
@@ -60,21 +55,18 @@ class GTAD_Trainer:
                 
                 self.optimizer.step() # Updates the parameters
 
-            self.network.eval()
-            with torch.no_grad():
-                for _, X, Y, _, EIGVAL, EIGVEC in self.test_loader:
-                    Y_hat_test = self.network(X, EIGVAL, EIGVEC) # Shape: (sample, label)
-                    
-                    acc_test = compute_accuracy(Y_hat_test, Y)
-                    
-                if acc_test > acc_best:
-                    acc_best = acc_test
-                    torch.save(self.network.state_dict(), 
-                        self.checkpoint_path + 
-                        str(self.args.feature) + '_' +
-                        str(self.args.label) + '_' +
-                        str(i) + '_' + 
-                        'best_model.pth')
+        self.network.eval()
+        with torch.no_grad():
+            for _, X, Y, _, EIGVAL, EIGVEC in self.test_loader:
+                Y_hat_test = self.network(X, EIGVAL, EIGVEC) # Shape: (sample, label)
+                acc_test = compute_accuracy(Y_hat_test, Y)
+
+                torch.save(self.network.state_dict(), 
+                    self.checkpoint_path + 
+                    str(self.args.feature) + '_' +
+                    str(self.args.label) + '_' +
+                    str(i) + '_' + 
+                    'best_model.pth')
 
     def test(self, i):
         tl, ta, tac, tpr, tsp, tse, f1s = [[] for _ in range(7)]
@@ -84,7 +76,7 @@ class GTAD_Trainer:
                                     str(self.args.label) + '_' + 
                                     str(i) + '_' + 
                                     'best_model.pth'))
-        # pdb.set_trace()
+
         self.network.eval()
         for _, X, Y, _, EIGVAL, EIGVEC in self.test_loader:
             Y_hat_test = self.network(X, EIGVAL, EIGVEC) # Shape: (sample, label)
